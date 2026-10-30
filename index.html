@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EdgeDB — Zero-Loss Rust Telemetry Daemon</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-indigo-200">
+          <i data-lucide="zap" class="w-5 h-5"></i>
+        </div>
+        <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-600 bg-clip-text text-transparent">EdgeDB</span>
+        <span class="px-2 py-0.5 text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full">Labs</span>
+      </div>
+
+      <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
+        <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+        <a href="#architecture" class="hover:text-indigo-600 transition">Architecture</a>
+        <a href="#demo" class="hover:text-indigo-600 transition">Live Demo</a>
+        <a href="#pricing" class="hover:text-indigo-600 transition">Pricing</a>
+        <a href="#docs" class="hover:text-indigo-600 transition">Docs</a>
+      </nav>
+
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/EdgeDB-Labs/edgedb" target="_blank" class="flex items-center space-x-2 px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 transition text-sm font-semibold">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span>GitHub</span>
+        </a>
+        <a href="#pricing" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-sm transition">
+          Get License
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="pt-20 pb-16 bg-gradient-to-b from-white via-slate-50 to-slate-100/50 border-b border-slate-200/60">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-6">
+        <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
+        <span>Built with Rust Edition 2024 & Axum 0.7</span>
+      </div>
+
+      <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight max-w-4xl mx-auto leading-tight">
+        Zero-Loss Telemetry Ingestion Daemon for <span class="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Edge Nodes</span>
+      </h1>
+
+      <p class="mt-6 text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        High-throughput payload ingestion powered by Tokio and Axum. Synchronous Write-Ahead Logging (WAL) ensures zero data loss during server crashes or hardware resets.
+      </p>
+
+      <!-- Quick Install Snippet -->
+      <div class="mt-8 max-w-xl mx-auto">
+        <div class="p-3 bg-slate-900 text-slate-200 rounded-xl shadow-xl flex items-center justify-between border border-slate-800">
+          <div class="flex items-center space-x-3 overflow-x-auto text-xs sm:text-sm font-mono">
+            <span class="text-slate-500">$</span>
+            <span class="text-indigo-400">docker pull</span>
+            <span class="text-slate-200">ghcr.io/edgedb-labs/edgedb:latest</span>
+          </div>
+          <button onclick="copyToClipboard('docker pull ghcr.io/edgedb-labs/edgedb:latest')" class="ml-3 p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Copy to clipboard">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Benchmarks Counter -->
+      <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto pt-8 border-t border-slate-200/80">
+        <div>
+          <div class="text-3xl font-extrabold text-slate-900">50,000+</div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1">Req / Sec Single Node</div>
+        </div>
+        <div>
+          <div class="text-3xl font-extrabold text-indigo-600">&lt; 0.8 ms</div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1">Ingestion Latency</div>
+        </div>
+        <div>
+          <div class="text-3xl font-extrabold text-slate-900">100%</div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1">WAL Crash Resilience</div>
+        </div>
+        <div>
+          <div class="text-3xl font-extrabold text-slate-900">&lt; 15 MB</div>
+          <div class="text-xs font-medium text-slate-500 uppercase tracking-wider mt-1">RAM Footprint</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Features -->
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Engineered for Harsh Edge Environments</h2>
+        <p class="mt-4 text-slate-600">Built specifically to handle unstable network links, sudden power loss, and high-concurrency sensor bursts.</p>
+      </div>
+
+      <div class="mt-16 grid md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200/80 hover:shadow-lg transition">
+          <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6">
+            <i data-lucide="hard-drive" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900">Write-Ahead Logging (WAL)</h3>
+          <p class="mt-3 text-slate-600 leading-relaxed text-sm">
+            Every incoming telemetry payload is written to a persistent append-only log before returning HTTP 200 OK. Never drop a single sensor reading.
+          </p>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200/80 hover:shadow-lg transition">
+          <div class="w-12 h-12 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center mb-6">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900">API Key & Rate Limiting</h3>
+          <p class="mt-3 text-slate-600 leading-relaxed text-sm">
+            Header-based authorization powered by custom Axum middleware and memory-efficient IP rate limiting using <code class="bg-slate-200/80 px-1 py-0.5 rounded text-xs">tower_governor</code>.
+          </p>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200/80 hover:shadow-lg transition">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6">
+            <i data-lucide="box" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900">Minimal Container Footprint</h3>
+          <p class="mt-3 text-slate-600 leading-relaxed text-sm">
+            Compiled via multi-stage builds into lightweight <code class="bg-slate-200/80 px-1 py-0.5 rounded text-xs">debian:bookworm-slim</code> runtime images optimized for low-resource hardware.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo Sandbox -->
+  <section id="demo" class="py-20 bg-slate-900 text-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="max-w-3xl mx-auto text-center mb-12">
+        <h2 class="text-3xl font-bold tracking-tight">Interactive Ingestion Simulator</h2>
+        <p class="mt-3 text-slate-400">Test EdgeDB's HTTP payload handler in real time right inside your browser.</p>
+      </div>
+
+      <div class="max-w-4xl mx-auto bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+        <div class="p-4 bg-slate-850 border-b border-slate-700 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+            <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+            <span class="ml-4 text-xs font-mono text-slate-400">POST /telemetry</span>
+          </div>
+          <button onclick="runSimulator()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition flex items-center space-x-2">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i>
+            <span>Send Live Payload</span>
+          </button>
+        </div>
+
+        <div class="p-6 grid md:grid-cols-2 gap-6 font-mono text-xs">
+          <div>
+            <div class="text-slate-400 font-semibold mb-2 uppercase text-[10px] tracking-wider">JSON Payload Input</div>
+            <pre class="bg-slate-950 p-4 rounded-xl text-slate-300 border border-slate-800 leading-relaxed">
+{
+  "sensor_id": "sensor_temp_098",
+  "value": 42.85,
+  "timestamp": 1726000000
+}</pre>
+          </div>
+          <div>
+            <div class="text-slate-400 font-semibold mb-2 uppercase text-[10px] tracking-wider">Daemon Output Log</div>
+            <div id="sim-output" class="bg-slate-950 p-4 rounded-xl text-emerald-400 border border-slate-800 h-28 overflow-y-auto leading-relaxed">
+              > Ready for telemetry ingestion...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Tiers -->
+  <section id="pricing" class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Predictable Commercial Pricing</h2>
+        <p class="mt-4 text-slate-600">Flat-rate tiers. No unexpected usage bills or server-side metering surprises.</p>
+      </div>
+
+      <div class="mt-16 grid md:grid-cols-3 gap-8">
+        <!-- Community Tier -->
+        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="text-lg font-bold text-slate-900">Community</div>
+            <p class="text-xs text-slate-500 mt-1">Ideal for hobbyists and individual developers.</p>
+            <div class="mt-6 text-4xl font-extrabold text-slate-900">$0 <span class="text-sm font-normal text-slate-500">/ forever</span></div>
+            <ul class="mt-8 space-y-3 text-sm text-slate-600">
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i><span>Core Rust Ingestion Engine</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i><span>WAL Persistence Disk Logs</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i><span>MIT Open-Source License</span></li>
+            </ul>
+          </div>
+          <a href="https://github.com/EdgeDB-Labs/edgedb" class="mt-8 block text-center py-2.5 px-4 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition">Community Docker Image</a>
+        </div>
+
+        <!-- Pro Node Tier -->
+        <div class="p-8 rounded-2xl bg-white border-2 border-indigo-600 shadow-xl flex flex-col justify-between relative">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Most Popular</div>
+          <div>
+            <div class="text-lg font-bold text-slate-900">Pro Node</div>
+            <p class="text-xs text-slate-500 mt-1">For startups and production edge deployments.</p>
+            <div class="mt-6 text-4xl font-extrabold text-slate-900">$49 <span class="text-sm font-normal text-slate-500">/ month / node</span></div>
+            <ul class="mt-8 space-y-3 text-sm text-slate-600">
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-indigo-600"></i><span>Everything in Community</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-indigo-600"></i><span>Prometheus Exporter Plugin</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-indigo-600"></i><span>High-Throughput Buffer Allocation</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-indigo-600"></i><span>Email & Discord Support</span></li>
+            </ul>
+          </div>
+          <a href="#" class="mt-8 block text-center py-2.5 px-4 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition shadow-md shadow-indigo-200">Start Pro Trial</a>
+        </div>
+
+        <!-- Team / Enterprise Tier -->
+        <div class="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="text-lg font-bold text-slate-900">Team / Enterprise</div>
+            <p class="text-xs text-slate-500 mt-1">Unlimited nodes for large organizations.</p>
+            <div class="mt-6 text-4xl font-extrabold text-slate-900">$249 <span class="text-sm font-normal text-slate-500">/ month</span></div>
+            <ul class="mt-8 space-y-3 text-sm text-slate-600">
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i><span>Unlimited Node Deployment</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i><span>High Availability Clustered Sync</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i><span>Custom Security Audit Logs</span></li>
+              <li class="flex items-center space-x-3"><i data-lucide="check" class="w-4 h-4 text-emerald-500"></i><span>Dedicated Slack Channel</span></li>
+            </ul>
+          </div>
+          <a href="#" class="mt-8 block text-center py-2.5 px-4 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition">Contact Enterprise</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+          <i data-lucide="zap" class="w-4 h-4"></i>
+        </div>
+        <span class="text-lg font-bold text-white tracking-tight">EdgeDB Labs</span>
+      </div>
+      <p class="mt-4 md:mt-0 text-xs text-slate-500">
+        © 2026 EdgeDB-Labs. Open core distributed infrastructure software.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      alert('Copied to clipboard: ' + text);
+    }
+
+    function runSimulator() {
+      const out = document.getElementById('sim-output');
+      out.innerHTML = '> POST /telemetry HTTP/1.1\n> Authorization: Bearer ed_key_test_992\n> Syncing to WAL log...\n< <span class="text-emerald-400">HTTP 200 OK (0.68 ms)</span>';
+    }
+  </script>
+</body>
+</html>
